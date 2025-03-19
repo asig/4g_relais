@@ -1,17 +1,17 @@
-#include "main.h"			
+#include "main.h"
 #include "string.h"
 
 void Air780e_Init()
 {
 	GPIO_InitTypeDef gpio_init;
-//	/* 第1步：打开GPIO时钟 */
-//	AIR780E_BOOT_GPIO_CLK_ENABLE();
-//	gpio_init.Pin = AIR780E_BOOT_PIN;
-//	gpio_init.Mode = GPIO_MODE_OUTPUT_PP;   			/* 设置PP输出 */
-//	gpio_init.Pull = GPIO_NOPULL;                		/* 上下拉电阻不使能 */
-//	gpio_init.Speed = GPIO_SPEED_FREQ_HIGH;  			/* GPIO速度等级 */
+//	/* Step 1: Enable GPIO clock */
+	//	AIR780E_BOOT_GPIO_CLK_ENABLE();
+	//	gpio_init.Pin = AIR780E_BOOT_PIN;
+	//	gpio_init.Mode = GPIO_MODE_OUTPUT_PP;   			/* Set to push-pull output mode */
+	//	gpio_init.Pull = GPIO_NOPULL;                		/* Do not enable pull-up or pull-down resistors */
+	//	gpio_init.Speed = GPIO_SPEED_FREQ_HIGH;  			/* Set GPIO speed to high frequency */
 
-//	HAL_GPIO_Init(AIR780E_BOOT_PORT, &gpio_init);	
+	//	HAL_GPIO_Init(AIR780E_BOOT_PORT, &gpio_init);
 
 }
 
@@ -43,7 +43,7 @@ void Air780e_NITZ()
 	uint8_t read=0,status=0,timeout=0;
 
 	comSendBuf(COM2,"AT+RESET\r",9) ;
-//收到 +NITZ数据包 意味着启动成功可以开始联网,没有收到会一直循环
+	// Receiving the +NITZ packet means the startup was successful and networking can begin. If not received, it will keep looping.
 
 	while(status<6)
 	{
@@ -61,20 +61,20 @@ void Air780e_NITZ()
 			}
 
 		}
-//		bsp_DelayMS(200);
-//		timeout++;
-//		if(timeout>50)//超时10S
-//		{
-//			printf("\n联网失败，检查SIM卡是否插好！按下复位键重启\n");
-//			while(1);
-//		}
+		//		bsp_DelayMS(200);
+		//		timeout++;
+		//		if(timeout>50)//Timeout 10 seconds
+		//		{
+		//			printf("\nNetwork connection failed, check if the SIM card is properly inserted! Press the reset button to restart\n");
+		//			while(1);
+		//		}
 
 	}
 
 
 }
 
-//连接4G网络,打印获得的IP
+// Connect to the 4G network and print the obtained IP
 void Air780e_Online()
 {
 
@@ -88,12 +88,12 @@ void Air780e_Online()
 	Air780e_Answer();
 }
 
-//查询是否已经联网  1:已经联网 0:未联网
+// Check if already connected to the network  1: connected, 0: not connected
 uint8_t  Is_Air780e_Online()
 {
 	uint8_t read=0,status=0,resoult=0;
 
-	
+
 	comSendBuf(COM2,"AT+CIFSR\r",9) ;
 	bsp_DelayMS(100);
 	while(status<5)
@@ -111,15 +111,14 @@ uint8_t  Is_Air780e_Online()
 								resoult= 0;
 							if(read<='9'&& read>='0') 
 								resoult= 1;
-							
-							bsp_DelayMS(1);
-							comClearRxFifo(COM2);
-							return resoult;
+
+				bsp_DelayMS(1);
+				comClearRxFifo(COM2);
+				return resoult;
 						}break;
 
 
 			}
-
 		}
 	}
 }

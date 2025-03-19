@@ -1,21 +1,21 @@
 /*
 *********************************************************************************************************
 *
-*	模块名称 : 主程序模块
-*	文件名称 : main.c
-*	版    本 : V1.0
-*	说    明 : Air780E测试程序。
-*              实验内容：
-*                1、插入SIM卡，上电。
-*                2、STM32发送AT指令要求Air780e联网，如果联网成功则打开继电器。
+*	Module Name : Main Program Module
+*	File Name   : main.c
+*	Version     : V1.0
+*	Description : Air780E Test Program.
+*	              Experiment Content:
+*	                1. Insert SIM card and power on.
+*	                2. STM32 sends AT commands to request Air780e to connect to the network. If the connection is successful, the relay is turned on.
 *
 *********************************************************************************************************
 */	
 #include "main.h"			
 
 
-/* 定义例程名和例程发布日期 */
-#define EXAMPLE_NAME	"Air780E测试程序"
+/* Define example name and release date */
+#define EXAMPLE_NAME	"Air780E Test Program"
 #define EXAMPLE_DATE	"2024-04-22"
 #define DEMO_VER		"1.0"
 
@@ -28,119 +28,119 @@ void Relay1_Init();
 
 /*
 *********************************************************************************************************
-*	函 数 名: main
-*	功能说明: c程序入口
-*	形    参: 无
-*	返 回 值: 错误代码(无需处理)
+*	Function Name: main
+*	Description  : Entry point of the C program
+*	Parameters   : None
+*	Return Value : Error code (no need to handle)
 *********************************************************************************************************
 */
 int main(void)
 {
 
-	bsp_Init();		/* 硬件初始化 */
-	PrintfLogo();	/* 打印例程名称和版本等信息 */
-	PrintfHelp();	/* 打印操作提示 */
+    bsp_Init();		/* Hardware initialization */
+    PrintfLogo();	/* Print example name, version, and other information */
+    PrintfHelp();	/* Print operation instructions */
 
-	
-	Relay_Init();
-	Relay1_Init();
+    
+    Relay_Init();
+    Relay1_Init();
 
-	Air780e_NITZ();
-	Air780e_Online();
-	
-	bsp_StartAutoTimer(0, 1000); /* 启动1个1s的自动重装的定时器 */
+    Air780e_NITZ();
+    Air780e_Online();
+    
+    bsp_StartAutoTimer(0, 1000); /* Start a 1-second auto-reloading timer */
 
-	/* 进入主程序循环体 */
-	while (1)
-	{
-		bsp_Idle();		/* 这个函数在bsp.c文件。用户可以修改这个函数实现CPU休眠和喂狗 */
+    /* Enter the main program loop */
+    while (1)
+    {
+        bsp_Idle();		/* This function is in bsp.c file. Users can modify this function to implement CPU sleep and watchdog feeding */
 
-		/* 判断定时器超时时间 */
-		if (bsp_CheckTimer(0))	
-		{
-			/* 每隔1s 进来一次 */  
-			if( Is_Air780e_Online())
-			{
-				RELAY_ON;
-				RELAY1_ON;
-			}
-			else
-			{
-				RELAY_OFF;
-				RELAY_OFF;
-			}
-				
-		}
-		
-		//通过STM32串口直接和AIR780E交互
-		//UART1接收到的数据通过UART2发送
-		uint8_t buf;
-		if(	comGetChar(COM1,&buf))
-			comSendChar(COM2,buf);
-		//UART2接收到的数据通过UART1发送
-		if(	comGetChar(COM2,&buf))
-			comSendChar(COM1,buf);
+        /* Check if the timer timeout has occurred */
+        if (bsp_CheckTimer(0))	
+        {
+            /* Enter here every 1 second */  
+            if( Is_Air780e_Online())
+            {
+                RELAY_ON;
+                RELAY1_ON;
+            }
+            else
+            {
+                RELAY_OFF;
+                RELAY_OFF;
+            }
+                
+        }
+        
+        // Direct interaction between STM32 and AIR780E via UART
+        // Data received on UART1 is sent via UART2
+        uint8_t buf;
+        if(	comGetChar(COM1,&buf))
+            comSendChar(COM2,buf);
+        // Data received on UART2 is sent via UART1
+        if(	comGetChar(COM2,&buf))
+            comSendChar(COM1,buf);
 
-	}
+    }
 }
 
 
 /*
 *********************************************************************************************************
-*	函 数 名: PrintfHelp
-*	功能说明: 打印操作提示
-*	形    参: 无
-*	返 回 值: 无
+*	Function Name: PrintfHelp
+*	Description  : Print operation instructions
+*	Parameters   : None
+*	Return Value : None
 *********************************************************************************************************
 */
 static void PrintfHelp(void)
 {
-	printf("Air780E测试程序:\r\n");
-	printf("1. 插入SIM卡，上电。\r\n");
-	printf("2. STM32发送AT指令要求Air780e联网，如果联网成功则打开继电器。\r\n");
+    printf("Air780E Test Program:\r\n");
+    printf("1. Insert SIM card and power on.\r\n");
+    printf("2. STM32 sends AT commands to request Air780e to connect to the network. If the connection is successful, the relay is turned on.\r\n");
 }
 
 /*
 *********************************************************************************************************
-*	函 数 名: PrintfLogo
-*	功能说明: 打印例程名称和例程发布日期, 接上串口线后，打开PC机的超级终端软件可以观察结果
-*	形    参: 无
-*	返 回 值: 无
+*	Function Name: PrintfLogo
+*	Description  : Print example name and release date. After connecting the serial cable, open the PC's terminal software to observe the result.
+*	Parameters   : None
+*	Return Value : None
 *********************************************************************************************************
 */
 static void PrintfLogo(void)
 {
-	
-	printf("\n\r");
-	printf("*************************************************************\n\r");
-	printf("* 例程名称   : %s\r\n", EXAMPLE_NAME);	/* 打印例程名称 */
-	printf("* 例程版本   : %s\r\n", DEMO_VER);		/* 打印例程版本 */
-	printf("* 发布日期   : %s\r\n", EXAMPLE_DATE);	/* 打印例程日期 */
+    
+    printf("\n\r");
+    printf("*************************************************************\n\r");
+    printf("* Example Name   : %s\r\n", EXAMPLE_NAME);	/* Print example name */
+    printf("* Example Version: %s\r\n", DEMO_VER);		/* Print example version */
+    printf("* Release Date   : %s\r\n", EXAMPLE_DATE);	/* Print example release date */
 
 }
 
 void Relay_Init()
 {
-	
-	GPIO_InitTypeDef gpio_init;
-	/* 第1步：打开GPIO时钟 */
-	RELAY_GPIO_CLK_ENABLE();
-	gpio_init.Pin = RELAY_PIN;
-	gpio_init.Mode = GPIO_MODE_OUTPUT_PP;   			/* 设置PP输出 */
-	gpio_init.Pull = GPIO_NOPULL;                		/* 上下拉电阻不使能 */
-	gpio_init.Speed = GPIO_SPEED_FREQ_HIGH;  			/* GPIO速度等级 */
-	HAL_GPIO_Init(RELAY_PORT, &gpio_init);	
+    
+    GPIO_InitTypeDef gpio_init;
+    /* Step 1: Enable GPIO clock */
+    RELAY_GPIO_CLK_ENABLE();
+    gpio_init.Pin = RELAY_PIN;
+    gpio_init.Mode = GPIO_MODE_OUTPUT_PP;   			/* Set to push-pull output */
+    gpio_init.Pull = GPIO_NOPULL;                		/* Disable pull-up and pull-down resistors */
+    gpio_init.Speed = GPIO_SPEED_FREQ_HIGH;  			/* GPIO speed level */
+    HAL_GPIO_Init(RELAY_PORT, &gpio_init);	
 }
 
 void Relay1_Init()
 {
-	
-	GPIO_InitTypeDef gpio_init;
-	/* 第1步：打开GPIO时钟 */
-	RELAY_GPIO_CLK_ENABLE();
-	gpio_init.Pin = RELAY1_PIN;
-	gpio_init.Mode = GPIO_MODE_OUTPUT_PP;   			/* 设置PP输出 */
-	gpio_init.Pull = GPIO_NOPULL;                		/* 上下拉电阻不使能 */
-	gpio_init.Speed = GPIO_SPEED_FREQ_HIGH;  			/* GPIO速度等级 */
-	HAL_GPIO_Init(RELAY_PORT, &gpio_init);	
+    
+    GPIO_InitTypeDef gpio_init;
+    /* Step 1: Enable GPIO clock */
+    RELAY_GPIO_CLK_ENABLE();
+    gpio_init.Pin = RELAY1_PIN;
+    gpio_init.Mode = GPIO_MODE_OUTPUT_PP;   			/* Set to push-pull output */
+    gpio_init.Pull = GPIO_NOPULL;                		/* Disable pull-up and pull-down resistors */
+    gpio_init.Speed = GPIO_SPEED_FREQ_HIGH;  			/* GPIO speed level */
+    HAL_GPIO_Init(RELAY_PORT, &gpio_init);	
 }

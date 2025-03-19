@@ -28,7 +28,7 @@
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 
-#include "bsp.h"			/* µ×²ãÓ²¼þÇý¶¯ */
+#include "bsp.h"			/* Low-level hardware driver */
 #include "AIR780E.h"
 
 
