@@ -1,0 +1,26 @@
+--cpu Cortex-M3
+".\objects\main.o"
+".\objects\stm32f1xx_hal_msp.o"
+".\objects\stm32f1xx_it.o"
+".\objects\air780e.o"
+".\objects\bsp.o"
+".\objects\bsp_key.o"
+".\objects\bsp_timer.o"
+".\objects\bsp_uart_fifo.o"
+".\objects\startup_stm32f103x6.o"
+".\objects\stm32f1xx_hal.o"
+".\objects\stm32f1xx_hal_uart.o"
+".\objects\stm32f1xx_hal_tim.o"
+".\objects\stm32f1xx_hal_rcc.o"
+".\objects\stm32f1xx_hal_gpio.o"
+".\objects\stm32f1xx_hal_cortex.o"
+".\objects\stm32f1xx_hal_pwr.o"
+".\objects\stm32f1xx_hal_dma.o"
+".\objects\stm32f1xx_hal_tim_ex.o"
+".\objects\system_stm32f1xx.o"
+".\objects\hardfaulthandler.o"
+".\objects\segger_hardfaulthandler.o"
+--library_type=microlib --strict --scatter ".\Objects\project.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\Listings\project.map" -o .\Objects\project.axf

@@ -1,0 +1,4 @@
+STM32F103C6T6A + Air780E
+
+
+project.hex 可直接烧写
