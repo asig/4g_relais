@@ -1,15 +1,15 @@
 /*
 *********************************************************************************************************
 *
-*	模块名称 : 数据观察点与跟踪(DWT)模块
-*	文件名称 : bsp_dwt.h
-*	版    本 : V1.0
-*	说    明 : 头文件
-*	修改记录 :
-*		版本号    日期        作者     说明
-*		V1.0    2015-08-18   Eric2013 正式发布
+*	Module Name : Data Watchpoint and Trace (DWT) Module
+*	File Name   : bsp_dwt.h
+*	Version     : V1.0
+*	Description : Header File
+*	Revision History :
+*		Version    Date         Author    Description
+*		V1.0    2015-08-18   Eric2013  Initial Release
 *
-*	Copyright (C), 2015-2020, 安富莱电子 www.armfly.com
+*	Copyright (C), 2015-2020, Anfu Lai Electronics www.armfly.com
 *
 *********************************************************************************************************
 */
