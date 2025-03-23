@@ -1,0 +1,104 @@
+project:
+  output:
+    type: hex
+  packs:
+    - pack: Keil::STM32F1xx_DFP@^2.4.1
+  setups:
+    - setup: Options for Flash
+      add-path:
+        - src/bsp/inc
+        - src
+        - src/STM32F1xx_HAL_Driver/Inc
+        - src/CMSIS/Include
+        - src/bsp
+        - src/CMSIS/Device/ST/STM32F1xx/Include
+      debug: "on"
+      define:
+        - USE_HAL_DRIVER
+        - STM32F103x6
+        - __MICROLIB
+      define-asm:
+        - __MICROLIB
+      misc:
+        - C:
+            - -std=c99
+          C-CPP:
+            - -fno-rtti
+            - -funsigned-char
+            - -fshort-enums
+            - -fshort-wchar
+            - -ffunction-sections
+            - -Wno-packed
+            - -Wno-missing-variable-declarations
+            - -Wno-missing-prototypes
+            - -Wno-missing-noreturn
+            - -Wno-sign-conversion
+            - -Wno-nonportable-include-path
+            - -Wno-reserved-id-macro
+            - -Wno-unused-macros
+            - -Wno-documentation-unknown-command
+            - -Wno-documentation
+            - -Wno-license-management
+            - -Wno-parentheses-equality
+          CPP:
+            - -xc++
+            - -std=c++11
+            - -fno-exceptions
+          ASM:
+            - -masm=auto
+          Link:
+            - --library_type=microlib
+            - --map
+            - --load_addr_map_info
+            - --xref
+            - --callgraph
+            - --symbols
+            - --info sizes
+            - --info totals
+            - --info unused
+            - --info veneers
+            - --strict
+            - --summary_stderr
+            - --info summarysizes
+  linker:
+    - script: project_Flash.sct
+  groups:
+    - group: User
+      files:
+        - file: src/main.c
+        - file: src/stm32f1xx_hal_msp.c
+        - file: src/stm32f1xx_it.c
+        - file: src/air780e.c
+    - group: BSP
+      files:
+        - file: src/bsp/bsp.c
+        - file: src/bsp/src/bsp_key.c
+        - file: src/bsp/src/bsp_timer.c
+        - file: src/bsp/src/bsp_uart_fifo.c
+    - group: MDK-ARM
+      files:
+        - file: src/CMSIS/Device/ST/STM32F1xx/Source/Templates/arm/startup_stm32f103x6.s
+          misc:
+            - ASM:
+                - -masm=auto
+    - group: HAL_Driver
+      files:
+        - file: src/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c
+        - file: src/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_uart.c
+        - file: src/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim.c
+        - file: src/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc.c
+        - file: src/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c
+        - file: src/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_cortex.c
+        - file: src/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pwr.c
+        - file: src/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_dma.c
+        - file: src/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim_ex.c
+    - group: CMSIS
+      files:
+        - file: src/system_stm32f1xx.c
+    - group: SEGGER/HardFault
+      files:
+        - file: src/segger/HardFaultHandlerMDK/HardFaultHandler.S
+          misc:
+            - ASM:
+                - -masm=auto
+        - file: src/segger/HardFaultHandlerMDK/SEGGER_HardFaultHandler.c

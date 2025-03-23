@@ -1,0 +1,15 @@
+build-idx:
+  generated-by: csolution version 2.8.0
+  csolution: project.csolution.yml
+  tmpdir: tmp
+  cprojects:
+    - cproject: project.cproject.yml
+  cbuilds:
+    - cbuild: project+Flash.cbuild.yml
+      project: project
+      configuration: +Flash
+      messages:
+        info:
+          - project.cbuild-pack.yml - file is already up-to-date
+          - project+Flash.cbuild-run.yml - file generated successfully
+          - project+Flash.cbuild.yml - file is already up-to-date
