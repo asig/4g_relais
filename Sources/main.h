@@ -22,14 +22,15 @@
 #define __MAIN_H
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f1xx_hal.h"
+// #include "stm32f1xx_hal.h"
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 
-#include "bsp.h"			/* Low-level hardware driver */
-#include "AIR780E.h"
+#include <stdint.h>
+#include "bsp/bsp.h"			/* Low-level hardware driver */
+#include "air780e.h"
 
 
 #define RELAY_GPIO_CLK_ENABLE()    	__HAL_RCC_GPIOB_CLK_ENABLE()

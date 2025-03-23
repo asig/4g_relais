@@ -47,22 +47,47 @@ set (RUNTIME_LIBRARY_SYSCALLS "--specs=nosys.specs")
 set (PROJECT_SOURCES
 	# LIST SOURCE FILES HERE
 	Startup/startup_stm32f103c6tx.s
+	
+	Sources/air780e.c
 	Sources/main.c
-	Sources/syscalls.c
 	Sources/sysmem.c
+	Sources/stm32f1xx_it.c
+	Sources/syscalls.c
+	Sources/stm32f1xx_hal_msp.c
+	Sources/system_stm32f1xx.c
+	
+	Sources/bsp/bsp_key.c
+	Sources/bsp/bsp_uart_fifo.c
+	Sources/bsp/bsp_timer.c 
+	Sources/bsp/bsp.c
 
+	Libraries/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_cortex.c
+	Libraries/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pwr.c
+	Libraries/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim_ex.c
+	Libraries/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim.c
+	Libraries/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_dma.c
+	Libraries/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c
+	Libraries/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c
+	Libraries/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_uart.c
+	Libraries/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc.c
 
 	)
 
 set (PROJECT_DEFINES
 	# LIST COMPILER DEFINITIONS HERE
-
-    )
+	STM32F103x6
+	USE_HAL_DRIVER
+	)
 
 set (PROJECT_INCLUDES
 	# LIST INCLUDE DIRECTORIES HERE
-
-    )
+	Sources
+	Sources/bsp
+	Sources/bsp/inc
+	Libraries/CMSIS/Device/ST/STM32F1xx/Include/
+	Libraries/STM32F1xx_HAL_Driver/Inc
+	Libraries/CMSIS/Include/
+	)
 
 ############ MODIFY ACCORDING TO REQUIREMENTS) ########################
 
@@ -84,6 +109,20 @@ include_directories (${PROJECT_INCLUDES})
 
 set (CMAKE_EXECUTABLE_SUFFIX ".elf")
 set (CMAKE_STATIC_LIBRARY_SUFFIX ".a")
-set (CMAKE_C_FLAGS "${MCPU} -std=gnu11 ${MFPU} ${MFLOAT_ABI} ${RUNTIME_LIBRARY} -mthumb -Wall -Werror")
+set (CMAKE_C_FLAGS "${MCPU} -std=gnu11 ${MFPU} ${MFLOAT_ABI} ${RUNTIME_LIBRARY} -mthumb -Wall -Werror -ffunction-sections")
 set (CMAKE_EXE_LINKER_FLAGS "-T${LINKER_SCRIPT} ${RUNTIME_LIBRARY_SYSCALLS} -Wl,-Map=test.map -Wl,--gc-sections -static -Wl,--start-group -lc -lm -Wl,--end-group")
 set (CMAKE_ASM_FLAGS "${CMAKE_C_FLAGS} -x assembler-with-cpp")
+
+#
+# HEX/BIN comversion taken from https://community.st.com/t5/stm32-vscode-extension-mcus/how-to-create-hex-or-bin-file-for-separate-flashing/m-p/681772/highlight/true#M302
+#
+
+# Convert output to hex and binary
+add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_OBJCOPY} -O ihex $<TARGET_FILE:${CMAKE_PROJECT_NAME}> ${CMAKE_PROJECT_NAME}.hex
+)
+
+# Convert to bin file -> add conditional check?
+add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${CMAKE_PROJECT_NAME}> ${CMAKE_PROJECT_NAME}.bin
+)

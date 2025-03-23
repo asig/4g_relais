@@ -1,9 +1,11 @@
 #include "main.h"
 #include "string.h"
 
+#include <stdint.h>
+
 void Air780e_Init()
 {
-	GPIO_InitTypeDef gpio_init;
+	// GPIO_InitTypeDef gpio_init;
 //	/* Step 1: Enable GPIO clock */
 	//	AIR780E_BOOT_GPIO_CLK_ENABLE();
 	//	gpio_init.Pin = AIR780E_BOOT_PIN;
@@ -40,9 +42,11 @@ void Air780e_Answer()
 
 void Air780e_NITZ()
 {
-	uint8_t read=0,status=0,timeout=0;
+	uint8_t read=0;
+	uint8_t status=0;
+//	uint8_t timeout=0;
 
-	comSendBuf(COM2,"AT+RESET\r",9) ;
+	comSendBuf(COM2,(uint8_t*)"AT+RESET\r",9) ;
 	// Receiving the +NITZ packet means the startup was successful and networking can begin. If not received, it will keep looping.
 
 	while(status<6)
@@ -78,13 +82,13 @@ void Air780e_NITZ()
 void Air780e_Online()
 {
 
-	comSendBuf(COM2,"AT\r",3) ;
+	comSendBuf(COM2,(uint8_t*)"AT\r",3) ;
 	Air780e_Answer();
-	comSendBuf(COM2,"AT+CSTT\r",8) ;
+	comSendBuf(COM2,(uint8_t*)"AT+CSTT\r",8) ;
 	Air780e_Answer();
-	comSendBuf(COM2,"AT+CIICR\r",9) ;
+	comSendBuf(COM2,(uint8_t*)"AT+CIICR\r",9) ;
 	Air780e_Answer();
-	comSendBuf(COM2,"AT+CIFSR\r",9) ;
+	comSendBuf(COM2,(uint8_t*)"AT+CIFSR\r",9) ;
 	Air780e_Answer();
 }
 
@@ -94,7 +98,7 @@ uint8_t  Is_Air780e_Online()
 	uint8_t read=0,status=0,resoult=0;
 
 
-	comSendBuf(COM2,"AT+CIFSR\r",9) ;
+	comSendBuf(COM2,(uint8_t*)"AT+CIFSR\r",9) ;
 	bsp_DelayMS(100);
 	while(status<5)
 	{
@@ -121,4 +125,7 @@ uint8_t  Is_Air780e_Online()
 			}
 		}
 	}
+	// can't happen!
+	return 0;
 }
+
