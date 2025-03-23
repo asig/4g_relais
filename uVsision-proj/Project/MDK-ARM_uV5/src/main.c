@@ -44,8 +44,12 @@ int main(void)
     bsp_Init();		/* Hardware initialization */
     PrintfLogo();	/* Print example name, version, and other information */
     PrintfHelp();	/* Print operation instructions */
-	
-		air780_send_command((uint8_t*)"AT", buf, bufsize);
+
+    printf("*********************************************************************\r\n");
+printf("****** BUILT FROM LINUX, BUT WITH NEW HIEARCHY!\r\n");	
+printf("*********************************************************************\r\n");
+
+        air780_send_command((uint8_t*)"AT", buf, bufsize);
 		printf("Response to 'AT' was: %s\r\n",buf);
 	
 		Air780e_Online();

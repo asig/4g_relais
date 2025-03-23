@@ -29,7 +29,7 @@
 /* Exported functions ------------------------------------------------------- */
 
 #include "bsp.h"			/* Low-level hardware driver */
-#include "AIR780E.h"
+#include "air780e.h"
 
 
 #define RELAY_GPIO_CLK_ENABLE()    	__HAL_RCC_GPIOB_CLK_ENABLE()
