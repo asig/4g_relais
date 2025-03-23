@@ -34,6 +34,10 @@ void Relay1_Init();
 *	Return Value : Error code (no need to handle)
 *********************************************************************************************************
 */
+
+enum { bufsize = 512 };
+static uint8_t buf[bufsize];
+
 int main(void)
 {
 
@@ -41,8 +45,9 @@ int main(void)
     PrintfLogo();	/* Print example name, version, and other information */
     PrintfHelp();	/* Print operation instructions */
 	
-	printf("Yeah, whatever!\r\n");
-
+		air780_send_command((uint8_t*)"AT", buf, bufsize);
+		printf("Response to 'AT' was: %s\r\n",buf);
+	
 		Air780e_Online();
     
     Relay_Init();
