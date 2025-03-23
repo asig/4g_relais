@@ -664,8 +664,6 @@ void TIM_HARD_IRQHandler(void)
 	/* Disable the interrupt first, then execute the callback function. 
 	   This is because the callback function might need to restart the timer. */
         s_TIM_CallBack4();
-    }	
-}
+}	
 
 #endif
-
