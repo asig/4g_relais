@@ -40,7 +40,10 @@ int main(void)
     bsp_Init();		/* Hardware initialization */
     PrintfLogo();	/* Print example name, version, and other information */
     PrintfHelp();	/* Print operation instructions */
+	
+	printf("Yeah, whatever!\r\n");
 
+		Air780e_Online();
     
     Relay_Init();
     Relay1_Init();
