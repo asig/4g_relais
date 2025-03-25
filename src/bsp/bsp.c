@@ -1,16 +1,17 @@
 /*
 *********************************************************************************************************
 *
-*	模块名称 : BSP模块(For STM32F429)
-*	文件名称 : bsp.c
-*	版    本 : V1.0
-*	说    明 : 这是硬件底层驱动程序的主文件。每个c文件可以 #include "bsp.h" 来包含所有的外设驱动模块。
-*			   bsp = Borad surport packet 板级支持包
-*	修改记录 :
-*		版本号  日期         作者       说明
-*		V1.0    2018-07-29  Eric2013   正式发布
+*	Module Name : BSP Module (For STM32F429)
+*	File Name   : bsp.c
+*	Version     : V1.0
+*	Description : This is the main file for the hardware low-level driver. Each c file can include 
+*				  "bsp.h" to include all peripheral driver modules.
+*				  bsp = Board Support Package
+*	Revision History :
+*		Version    Date         Author      Description
+*		V1.0       2018-07-29   Eric2013    Official release
 *
-*	Copyright (C), 2018-2030, 安富莱电子 www.armfly.com
+*	Copyright (C), 2018-2030, Anfu Lai Electronics www.armfly.com
 *
 *********************************************************************************************************
 */
@@ -20,7 +21,7 @@
 
 /*
 *********************************************************************************************************
-*	                                   函数声明
+*	                                   Function Declarations
 *********************************************************************************************************
 */
 static void SystemClock_Config(void);
@@ -28,50 +29,51 @@ static void SystemClock_Config(void);
 
 /*
 *********************************************************************************************************
-*	函 数 名: bsp_Init
-*	功能说明: 初始化所有的硬件设备。该函数配置CPU寄存器和外设的寄存器并初始化一些全局变量。只需要调用一次
-*	形    参：无
-*	返 回 值: 无
+*	Function Name: bsp_Init
+*	Description: Initializes all hardware devices. This function configures CPU registers and peripheral 
+*                 registers and initializes some global variables. It only needs to be called once.
+*	Parameters: None
+*	Return Value: None
 *********************************************************************************************************
 */
 void bsp_Init(void)
 {
 	/* 
-       STM32H429 HAL 库初始化，此时系统用的还是F429自带的16MHz，HSI时钟:
-	   - 调用函数HAL_InitTick，初始化滴答时钟中断1ms。
-	   - 设置NVIV优先级分组为4。
+	   STM32H429 HAL library initialization. At this point, the system is still using the 16MHz HSI clock built into the F429:
+	   - Calls the function HAL_InitTick to initialize the SysTick interrupt to 1ms.
+	   - Sets the NVIC priority grouping to 4.
 	 */
 	HAL_Init();
 
 	/* 
-       配置系统时钟到168MHz
-       - 切换使用HSE。
-       - 此函数会更新全局变量SystemCoreClock，并重新配置HAL_InitTick。
-    */
+	   Configure the system clock to 168MHz
+	   - Switch to using HSE.
+	   - This function will update the global variable SystemCoreClock and reconfigure HAL_InitTick.
+	*/
 	SystemClock_Config();
 
 	/* 
-	   Event Recorder：
-	   - 可用于代码执行时间测量，MDK5.25及其以上版本才支持，IAR不支持。
-	   - 默认不开启，如果要使能此选项，务必看V5开发板用户手册第8章
+	   Event Recorder:
+	   - Can be used for code execution time measurement, supported in MDK version 5.25 and above, not supported in IAR.
+	   - Disabled by default. If you want to enable this option, be sure to refer to Chapter 8 of the V5 development board user manual.
 	*/	
 #if Enable_EventRecorder == 1  
-	/* 初始化EventRecorder并开启 */
+	/* Initialize EventRecorder and enable it */
 	EventRecorderInitialize(EventRecordAll, 1U);
 	EventRecorderStart();
 #endif
 	
-	bsp_InitKey();    	/* 按键初始化，要放在滴答定时器之前，因为按钮检测是通过滴答定时器扫描 */
-	bsp_InitTimer();  	/* 初始化滴答定时器 */
-	bsp_InitUart();		/* 初始化串口 */
-//	bsp_InitExtIO();    /* 初始化扩展IO */
-//	bsp_InitLed();    	/* 初始化LED */	
+	bsp_InitKey();    	/* Key initialization, should be placed before the tick timer, as button detection is scanned via the tick timer */
+	bsp_InitTimer();  	/* Initialize the tick timer */
+	bsp_InitUart();		/* Initialize the UART */
+//	bsp_InitExtIO();    /* Initialize extended IO */
+//	bsp_InitLed();    	/* Initialize LED */
 }
 
 /*
 *********************************************************************************************************
-*	函 数 名: SystemClock_Config
-*	功能说明: 初始化系统时钟
+*	Function Name: SystemClock_Config
+*	Description: Initializes the system clock
 *            	System Clock source            = PLL (HSE)
 *            	SYSCLK(Hz)                     = 168000000 (CPU Clock)
 *            	HCLK = SYSCLK / 1              = 168000000 (AHB1Periph)
@@ -84,10 +86,11 @@ void bsp_Init(void)
 *            	PLL_Q                          = 4
 *            	VDD(V)                         = 3.3
 *            	Flash Latency(WS)              = 5
-*	形    参: 无
-*	返 回 值: 无
+*	Parameters: None
+*	Return Value: None
 *********************************************************************************************************
 */
+
 static void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
@@ -125,21 +128,22 @@ static void SystemClock_Config(void)
 
 /*
 *********************************************************************************************************
-*	函 数 名: Error_Handler
-*	形    参: file : 源代码文件名称。关键字 __FILE__ 表示源代码文件名。
-*			  line ：代码行号。关键字 __LINE__ 表示源代码行号
-*	返 回 值: 无
+*	Function Name: Error_Handler
+*	Parameters: file : Source code file name. The keyword __FILE__ represents the source code file name.
+*			   line : Code line number. The keyword __LINE__ represents the source code line number.
+*	Return Value: None
 *		Error_Handler(__FILE__, __LINE__);
 *********************************************************************************************************
 */
 void Error_Handler(char *file, uint32_t line)
 {
 	/* 
-		用户可以添加自己的代码报告源代码文件名和代码行号，比如将错误文件和行号打印到串口
+		Users can add their own code to report the source code file name and line number, 
+		for example, print the error file and line number to the UART:
 		printf("Wrong parameters value: file %s on line %d\r\n", file, line) 
 	*/
 	
-	/* 这是一个死循环，断言失败时程序会在此处死机，以便于用户查错 */
+	/* This is an infinite loop. When an assertion fails, the program will hang here to help users debug. */
 	if (line == 0)
 	{
 		return;
@@ -152,11 +156,12 @@ void Error_Handler(char *file, uint32_t line)
 
 /*
 *********************************************************************************************************
-*	函 数 名: bsp_RunPer10ms
-*	功能说明: 该函数每隔10ms被Systick中断调用1次。详见 bsp_timer.c的定时中断服务程序。一些处理时间要求不严格的
-*			任务可以放在此函数。比如：按键扫描、蜂鸣器鸣叫控制等。
-*	形    参: 无
-*	返 回 值: 无
+*	Function Name: bsp_RunPer10ms
+*	Description: This function is called once every 10ms by the Systick interrupt. See the timer interrupt 
+*				 service routine in bsp_timer.c. Tasks that do not have strict time requirements can be placed 
+*				 in this function, such as key scanning, buzzer control, etc.
+*	Parameters: None
+*	Return Value: None
 *********************************************************************************************************
 */
 void bsp_RunPer10ms(void)
@@ -166,11 +171,12 @@ void bsp_RunPer10ms(void)
 
 /*
 *********************************************************************************************************
-*	函 数 名: bsp_RunPer1ms
-*	功能说明: 该函数每隔1ms被Systick中断调用1次。详见 bsp_timer.c的定时中断服务程序。一些需要周期性处理的事务
-*			 可以放在此函数。比如：触摸坐标扫描。
-*	形    参: 无
-*	返 回 值: 无
+*	Function Name: bsp_RunPer1ms
+*	Description: This function is called once every 1ms by the Systick interrupt. See the timer interrupt 
+*				 service routine in bsp_timer.c. Tasks that require periodic processing can be placed 
+*				 in this function, such as touch coordinate scanning.
+*	Parameters: None
+*	Return Value: None
 *********************************************************************************************************
 */
 void bsp_RunPer1ms(void)
@@ -180,40 +186,43 @@ void bsp_RunPer1ms(void)
 
 /*
 *********************************************************************************************************
-*	函 数 名: bsp_Idle
-*	功能说明: 空闲时执行的函数。一般主程序在for和while循环程序体中需要插入 CPU_IDLE() 宏来调用本函数。
-*			 本函数缺省为空操作。用户可以添加喂狗、设置CPU进入休眠模式的功能。
-*	形    参: 无
-*	返 回 值: 无
+*	Function Name: bsp_Idle
+*	Description: Function executed during idle time. Typically, the main program needs to insert the 
+*				 CPU_IDLE() macro in the body of for and while loops to call this function.
+*				 By default, this function performs no operation. Users can add functionality such as 
+*				 watchdog feeding or setting the CPU to enter sleep mode.
+*	Parameters: None
+*	Return Value: None
 *********************************************************************************************************
 */
 void bsp_Idle(void)
 {
-	/* --- 喂狗 */
+	/* --- Feed the watchdog */
 
-	/* --- 让CPU进入休眠，由Systick定时中断唤醒或者其他中断唤醒 */
+	/* --- Put the CPU into sleep mode, to be awakened by Systick timer interrupt or other interrupts */
 
-	/* 例如 emWin 图形库，可以插入图形库需要的轮询函数 */
+	/* For example, for the emWin graphics library, you can insert the polling function required by the graphics library */
 	//GUI_Exec();
 
-	/* 例如 uIP 协议，可以插入uip轮询函数 */
+	/* For example, for the uIP protocol, you can insert the uIP polling function */
 	//TOUCH_CapScan();
 }
 
 /*
 *********************************************************************************************************
-*	函 数 名: HAL_Delay
-*	功能说明: 重定向毫秒延迟函数。替换HAL中的函数。因为HAL中的缺省函数依赖于Systick中断，如果在USB、SD卡
-*             中断中有延迟函数，则会锁死。也可以通过函数HAL_NVIC_SetPriority提升Systick中断
-*	形    参: 无
-*	返 回 值: 无
+*	Function Name: HAL_Delay
+*	Description: Redirect the millisecond delay function. Replaces the function in HAL. The default function 
+*                 in HAL relies on the Systick interrupt, which can cause a deadlock if there is a delay 
+*                 function in USB or SD card interrupts. Alternatively, the Systick interrupt priority can 
+*                 be raised using the HAL_NVIC_SetPriority function.
+*	Parameters: None
+*	Return Value: None
 *********************************************************************************************************
 */
-/* 当前例子使用stm32f4xx_hal.c默认方式实现，未使用下面重定向的函数 */
+/* The current example uses the default implementation in stm32f4xx_hal.c and does not use the redirected function below */
 #if 0
 void HAL_Delay(uint32_t Delay)
 {
 	bsp_DelayUS(Delay * 1000);
 }
 #endif
-
