@@ -1,11 +1,11 @@
 /*
 *********************************************************************************************************
 *
-*	Ä£¿éÃû³Æ : ´®¿ÚÖĞ¶Ï+FIFOÇı¶¯Ä£¿é
-*	ÎÄ¼şÃû³Æ : bsp_uart_fifo.h
-*	Ëµ    Ã÷ : Í·ÎÄ¼ş
+*	Module Name : UART Interrupt + FIFO Buffer Module
+*	File Name   : bsp_uart_fifo.h
+*	Description : Header File
 *
-*	Copyright (C), 2015-2020, °²¸»À³µç×Ó www.armfly.com
+*	Copyright (C), 2015-2020, Armfly Electronics www.armfly.com
 *
 *********************************************************************************************************
 */
@@ -14,29 +14,29 @@
 #define _BSP_USART_FIFO_H_
 
 /*
-	°²¸»À³STM32-V7 ´®¿Ú·ÖÅä£º
-	¡¾´®¿Ú1¡¿ RS232 Ğ¾Æ¬µÚ1Â·¡£
-		PA9/USART1_TX	  --- ´òÓ¡µ÷ÊÔ¿Ú
-		P10/USART1_RX
+	STM32-V7 UART distribution:
+	Channel 1: RS232 chip, 1 channel
+		PA9/USART1_TX    --- Debug port
+		PA10/USART1_RX
 
-	¡¾´®¿Ú2¡¿ PA2 ¹Ü½ÅÓÃÓÚÒÔÌ«Íø£» RX¹Ü½ÅÓÃÓÚ½ÓÊÕGPSĞÅºÅ
-		PA2/USART2_TX/ETH_MDIO (ÓÃÓÚÒÔÌ«Íø£¬²»×ö´®¿Ú·¢ËÍÓÃ)
-		PA3/USART2_RX	;½ÓGPSÄ£¿éÊä³ö
+	Channel 2: PA2 universal IO pin used for Beidou satellite RX to receive GPS signals
+		PA2/USART2_TX/ETH_MDIO (used for Beidou satellite transmission)
+		PA3/USART2_RX    ; GPS module reception
 
-	¡¾´®¿Ú3¡¿ RS485 Í¨ĞÅ - TTL ÌøÏß ºÍ ÅÅÕë
+	Channel 3: RS485 communication - TTL level to RS485
 		PB10/USART3_TX
 		PB11/USART3_RX
 
-	¡¾´®¿Ú4¡¿ --- ²»×ö´®¿ÚÓÃ¡£ SD¿¨Õ¼ÓÃ 
-	¡¾´®¿Ú5¡¿ --- ²»×ö´®¿ÚÓÃ¡£ SD¿¨Õ¼ÓÃ
+	Channel 4: --- Reserved for external expansion, SD card occupied
+	Channel 5: --- Reserved for external expansion, SD card occupied
 
-	¡¾´®¿Ú6¡¿--- GPRSÄ£¿é £¬WIFIÄ£¿é(ESP8266) 
+	Channel 6: --- GPRS module or WIFI module (ESP8266)
 		PC6/USART6_TX
 		PC7/USART6_RX
 		
-	¡¾´®¿Ú7¡¿ --- ²»×ö´®¿ÚÓÃ¡£ SPI3Õ¼ÓÃ
+	Channel 7: --- Reserved for external expansion, SPI3 occupied
 	
-	¡¾´®¿Ú8¡¿ --- ²»×ö´®¿ÚÓÃ¡£ LTDCÏÔÊ¾½Ó¿ÚÓÃ
+	Channel 8: --- Reserved for external expansion, LTDC display interface
 */
 
 
@@ -49,7 +49,7 @@
 #define	UART7_FIFO_EN	0
 #define	UART8_FIFO_EN	0
 
-/* PB2 ¿ØÖÆRS485Ğ¾Æ¬µÄ·¢ËÍÊ¹ÄÜ */
+/* PB2 is used for RS485 transceiver control */
 #define RS485_TXEN_GPIO_CLK_ENABLE()      __HAL_RCC_GPIOB_CLK_ENABLE()
 #define RS485_TXEN_GPIO_PORT              GPIOB
 #define RS485_TXEN_PIN                    GPIO_PIN_2
@@ -57,7 +57,7 @@
 #define RS485_RX_EN()	RS485_TXEN_GPIO_PORT->BSRR = (RS485_TXEN_PIN<<16)
 #define RS485_TX_EN()	RS485_TXEN_GPIO_PORT->BSRR = RS485_TXEN_PIN
 
-/* ¶¨Òå¶Ë¿ÚºÅ */
+/* ï¿½ï¿½ï¿½ï¿½Ë¿Úºï¿½ */
 typedef enum
 {
 	COM1 = 0,	/* USART1 */
@@ -70,7 +70,7 @@ typedef enum
 	COM8 = 7	/* UART8 */	
 }COM_PORT_E;
 
-/* ¶¨Òå´®¿Ú²¨ÌØÂÊºÍFIFO»º³åÇø´óĞ¡£¬·ÖÎª·¢ËÍ»º³åÇøºÍ½ÓÊÕ»º³åÇø, Ö§³ÖÈ«Ë«¹¤ */
+/* Configure internal buffer sizes for FIFO. The sizes are defined for both transmit and receive buffers, supporting full-duplex communication. */
 #if UART1_FIFO_EN == 1
 	#define UART1_BAUD			115200
 	#define UART1_TX_BUF_SIZE	1*1024
@@ -119,26 +119,26 @@ typedef enum
 	#define UART8_RX_BUF_SIZE	1*1024
 #endif
 
-/* ´®¿ÚÉè±¸½á¹¹Ìå */
+/* UART device structure */
 typedef struct
 {
-	USART_TypeDef *uart;		/* STM32ÄÚ²¿´®¿ÚÉè±¸Ö¸Õë */
-	uint8_t *pTxBuf;			/* ·¢ËÍ»º³åÇø */
-	uint8_t *pRxBuf;			/* ½ÓÊÕ»º³åÇø */
-	uint16_t usTxBufSize;		/* ·¢ËÍ»º³åÇø´óĞ¡ */
-	uint16_t usRxBufSize;		/* ½ÓÊÕ»º³åÇø´óĞ¡ */
-	__IO uint16_t usTxWrite;	/* ·¢ËÍ»º³åÇøĞ´Ö¸Õë */
-	__IO uint16_t usTxRead;		/* ·¢ËÍ»º³åÇø¶ÁÖ¸Õë */
-	__IO uint16_t usTxCount;	/* µÈ´ı·¢ËÍµÄÊı¾İ¸öÊı */
+	USART_TypeDef *uart;		/* Pointer to the internal STM32 UART device */
+	uint8_t *pTxBuf;			/* Transmit buffer */
+	uint8_t *pRxBuf;			/* Receive buffer */
+	uint16_t usTxBufSize;		/* Transmit buffer size */
+	uint16_t usRxBufSize;		/* Receive buffer size */
+	__IO uint16_t usTxWrite;	/* Transmit buffer write pointer */
+	__IO uint16_t usTxRead;		/* Transmit buffer read pointer */
+	__IO uint16_t usTxCount;	/* Count of data waiting to be transmitted */
 
-	__IO uint16_t usRxWrite;	/* ½ÓÊÕ»º³åÇøĞ´Ö¸Õë */
-	__IO uint16_t usRxRead;		/* ½ÓÊÕ»º³åÇø¶ÁÖ¸Õë */
-	__IO uint16_t usRxCount;	/* »¹Î´¶ÁÈ¡µÄĞÂÊı¾İ¸öÊı */
+	__IO uint16_t usRxWrite;	/* Receive buffer write pointer */
+	__IO uint16_t usRxRead;		/* Receive buffer read pointer */
+	__IO uint16_t usRxCount;	/* Count of unread received data */
 
-	void (*SendBefor)(void); 	/* ¿ªÊ¼·¢ËÍÖ®Ç°µÄ»Øµ÷º¯ÊıÖ¸Õë£¨Ö÷ÒªÓÃÓÚRS485ÇĞ»»µ½·¢ËÍÄ£Ê½£© */
-	void (*SendOver)(void); 	/* ·¢ËÍÍê±ÏµÄ»Øµ÷º¯ÊıÖ¸Õë£¨Ö÷ÒªÓÃÓÚRS485½«·¢ËÍÄ£Ê½ÇĞ»»Îª½ÓÊÕÄ£Ê½£© */
-	void (*ReciveNew)(uint8_t _byte);	/* ´®¿ÚÊÕµ½Êı¾İµÄ»Øµ÷º¯ÊıÖ¸Õë */
-	uint8_t Sending;			/* ÕıÔÚ·¢ËÍÖĞ */
+	void (*SendBefor)(void); 	/* Callback function pointer before starting transmission (e.g., for RS485 switching to transmit mode) */
+	void (*SendOver)(void); 	/* Callback function pointer after transmission is complete (e.g., for RS485 switching back to receive mode) */
+	void (*ReciveNew)(uint8_t _byte);	/* Callback function pointer for handling newly received data */
+	uint8_t Sending;			/* Indicates if data is currently being transmitted */
 }UART_T;
 
 void bsp_InitUart(void);
