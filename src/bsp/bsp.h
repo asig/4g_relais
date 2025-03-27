@@ -1,16 +1,17 @@
 /*
 *********************************************************************************************************
 *
-*	模块名称 : BSP模块(For STM32F429)
-*	文件名称 : bsp.h
-*	版    本 : V1.0
-*	说    明 : 这是硬件底层驱动程序的主文件。每个c文件可以 #include "bsp.h" 来包含所有的外设驱动模块。
-*			   bsp = Borad surport packet 板级支持包
-*	修改记录 :
-*		版本号  日期         作者       说明
-*		V1.0    2018-07-29  Eric2013   正式发布
+*	Module Name : BSP Module (For STM32F429)
+*	File Name   : bsp.h
+*	Version     : V1.0
+*	Description : This file is the hardware abstraction layer for the board. Each C file should include 
+*	              "bsp.h" to access all the hardware-related modules.
+*	              bsp = Board Support Package
+*	Revision History :
+*		Version   Date         Author      Description
+*		V1.0      2018-07-29   Eric2013    Initial release
 *
-*	Copyright (C), 2018-2030, 安富莱电子 www.armfly.com
+*	Copyright (C), 2018-2030, Armfly Electronics www.armfly.com
 *
 *********************************************************************************************************
 */
@@ -21,30 +22,30 @@
 #define STM32_V6    
 
 
-/* 检查是否定义了开发板型号 */
+/* Check if the port model is defined */
 #if !defined (STM32_V6)
 	#error "Please define the board model : STM32_V6"
 #endif
 
-/* 定义 BSP 版本号 */
+/* Define BSP version */
 #define __STM32H7_BSP_VERSION		"1.1"
 
-/* CPU空闲时执行的函数 */
+/* Function executed during CPU idle time */
 //#define CPU_IDLE()		bsp_Idle()
 
-/* 开关全局中断的宏 */
-#define ENABLE_INT()	__set_PRIMASK(0)	/* 使能全局中断 */
-#define DISABLE_INT()	__set_PRIMASK(1)	/* 禁止全局中断 */
+/* Global interrupt control macros */
+#define ENABLE_INT()	__set_PRIMASK(0)	/* Enable global interrupts */
+#define DISABLE_INT()	__set_PRIMASK(1)	/* Disable global interrupts */
 
-/* 这个宏仅用于调试阶段排错 */
+/* Code for debugging during the development phase */
 #define BSP_Printf		printf
 //#define BSP_Printf(...)
 
-#define EXTI9_5_ISR_MOVE_OUT		/* bsp.h 中定义此行，表示本函数移到 stam32f4xx_it.c。 避免重复定义 */
+#define EXTI9_5_ISR_MOVE_OUT	/* bsp.h contains declarations to avoid redefinition errors in stam32f4xx_it.c and other files */
 
 #define ERROR_HANDLER()		Error_Handler(__FILE__, __LINE__);
 
-/* 默认是关闭状态 */
+/* Default is off state */
 #define  Enable_EventRecorder  0
 
 #if Enable_EventRecorder == 1
@@ -64,10 +65,10 @@
 	#define FALSE 0
 #endif
 
-/* 定义优先级分组 */
+/* Interrupt priority configuration */
 #define NVIC_PREEMPT_PRIORITY	4
 
-/* 通过取消注释或者添加注释的方式控制是否包含底层驱动模块 */
+/* Uncomment the following line to include the message module */
 //#include "bsp_msg.h"
 //#include "bsp_user_lib.h"
 #include "bsp_timer.h"
@@ -125,7 +126,7 @@
 //#include "bsp_rs485_led.h"
 //#include "bsp_can.h"
 
-/* 提供给其他C文件调用的函数 */
+/* Provide functions used by other C files */
 void bsp_Init(void);
 void bsp_Idle(void);
 
