@@ -47,6 +47,7 @@ build:
       - -Wno-documentation
       - -Wno-license-management
       - -Wno-parentheses-equality
+      - -Wno-pointer-sign
     CPP:
       - -xc++
       - -std=c++11
@@ -68,6 +69,7 @@ build:
       - -Wno-documentation
       - -Wno-license-management
       - -Wno-parentheses-equality
+      - -Wno-pointer-sign
     Link:
       - --library_type=microlib
       - --map
@@ -121,6 +123,8 @@ build:
         - file: src/stm32f1xx_it.c
           category: sourceC
         - file: src/air780e.c
+          category: sourceC
+        - file: src/relay.c
           category: sourceC
     - group: BSP
       files:

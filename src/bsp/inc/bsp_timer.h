@@ -14,6 +14,8 @@
 #ifndef __BSP_TIMER_H
 #define __BSP_TIMER_H
 
+#include <stdint.h>
+
 /*
 	Define several global variables for software timers here.
 	Note: __IO (volatile) must be added because these variables are accessed in both interrupts and the main program, 

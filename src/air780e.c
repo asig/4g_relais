@@ -1,5 +1,7 @@
-#include "main.h"
-#include "string.h"
+#include "air780e.h"
+#include "bsp_uart_fifo.h"
+#include "stm32f1xx_hal_gpio.h"
+
 
 void Air780e_Init()
 {
@@ -123,22 +125,6 @@ uint8_t  Is_Air780e_Online()
 	}
 	// Can't happen!
 	return 0;
-}
-
-
-void air780_send_command(uint8_t *cmd, uint8_t *response, size_t buf_size) {
-	comSendBuf(COM2, cmd, strlen((char*)cmd));
-	comSendBuf(COM2, (uint8_t*)"\r", 1);
-
-	uint8_t read;
-	uint32_t pos = 0;
-	bsp_DelayMS(100);
-	while(comGetChar(COM2,&read)) {
-		if (pos < buf_size - 1) {
-			response[pos++] = read;
-		}
-	}
-	response[pos] = 0;
 }
 
 

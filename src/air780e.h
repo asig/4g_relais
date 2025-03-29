@@ -1,7 +1,8 @@
 #ifndef __AIR780E_H
 #define __AIR780E_H
 
-#include "main.h"
+#include <stddef.h>
+#include <stdint.h>
 
 #define AIR780E_BOOT_GPIO_CLK_ENABLE __HAL_RCC_GPIOC_CLK_ENABLE
 #define AIR780E_BOOT_PORT            GPIOC

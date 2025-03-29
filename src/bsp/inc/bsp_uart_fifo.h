@@ -13,6 +13,8 @@
 #ifndef _BSP_USART_FIFO_H_
 #define _BSP_USART_FIFO_H_
 
+#include "bsp.h"
+
 /*
 	STM32-V7 UART distribution:
 	Channel 1: RS232 chip, 1 channel
